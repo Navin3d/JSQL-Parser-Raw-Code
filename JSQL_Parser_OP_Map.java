@@ -31,9 +31,11 @@ public class SqlScriptParser {
                 for (ColumnDefinition columnDefinition : columnDefinitions) {
                     String columnName = columnDefinition.getColumnName();
                     String dataType = columnDefinition.getColDataType().getDataType();
-                    String defaultValue = columnDefinition.getDefaultExpression() != null
-                            ? columnDefinition.getDefaultExpression().toString()
-                            : null;
+                    String defaultValue = columnDefinition.getColumnSpecStrings().stream()
+                            .filter(spec -> spec.startsWith("DEFAULT"))
+                            .findFirst()
+                            .map(spec -> spec.substring(spec.indexOf('\'') + 1, spec.lastIndexOf('\'')))
+                            .orElse(null);
 
                     columnMap.put(columnName, "Data Type: " + dataType + ", Default Value: " + defaultValue);
                 }
